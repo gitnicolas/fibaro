@@ -10,10 +10,12 @@ local motionSensorId = 5
 local lightSensorId = 7
 local dimmerId = 23
 local counterName = "UpperStairsTimer"
+local dayStart = 6
+local dayEnd = 20
 local dayBrightness = "49"
 local nightBrightness = "9"
 
-local illuminanceThreshold = 900
+local illuminanceThreshold = 50
 local maxBrightness = "99"
 local startSource = fibaro:getSourceTrigger()
 if
@@ -27,7 +29,9 @@ then
 	local counter = tonumber(fibaro:getGlobalValue(counterName)) + 1
 	fibaro:setGlobal(counterName, counter)
 	if counter == 1 then
-		local brightness = nightBrightness
+		local hour = os.date("*t")["hour"]
+		local brightness
+		if hour > dayStart and hour < dayEnd then brightness = dayBrightness else brightness = nightBrightness end
 		fibaro:call(dimmerId, "setValue", brightness)
 	end
 	setTimeout(function()
